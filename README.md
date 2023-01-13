@@ -6,3 +6,5 @@ Whalength code is used from an existing github repo with help from Jordan Lerma 
 Morphometrix code is used from an existing github repo: https://github.com/wingtorres/morphometrix
 
 Collatrix code is used from an existing github repo: https://github.com/cbirdferrer/collatrix
+
+Preparing new LIDAR units also requires use of the following github repo: https://github.com/sparkfun/Arduino_Boards

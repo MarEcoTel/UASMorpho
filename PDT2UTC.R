@@ -17,5 +17,15 @@ PDT2UTC <- function(vidstart, mins, secs, weirdmillis) {
     round((mins*60) + secs + (weirdmillis/30))
 }
 
-PDT2UTC("2022-08-16 11:02:08", #start on this date
-        0,24,02)
+PDT2UTC("2023-01-04 10:14:15", #start on this date
+        0,0,0)
+
+
+
+#below used for pulling stills from PVC flights at timestamps
+  dt <- as.numeric(abs(difftime(lubridate::with_tz(lubridate::mdy_hms("1/4/2023 18:14:23", 
+                                                                    tz="UTC"), 
+                                                 tz = "America/Los_Angeles"),
+         lubridate::mdy_hms("1/4/2023 10:14:15", 
+                            tz="America/Los_Angeles"),
+         units = "secs"))) ; paste0(floor(dt/60), ":", dt-(floor(dt/60)*60))

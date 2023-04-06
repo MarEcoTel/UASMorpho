@@ -30,7 +30,8 @@
 # so ignore that for now. As always, let me, David, know if you have any questions by emailing me
 # at dsweeney@marecotel.org or by calling me at +1 224-804-7754.
 
-corrected_image_alt <- function(lidar_file, vid_start, still_time, image_name, safety_file, 
+corrected_image_alt <- function(lidar_file, vid_start, still_time, vid_num = 1, added_vid_millis = 0, 
+                                image_name, safety_file, 
                                 lidar_camera_offset_cm = -9, focal_length = 25, pixel_dim = .0045) {
   #load necessary packages
   require(lubridate)
@@ -43,8 +44,11 @@ corrected_image_alt <- function(lidar_file, vid_start, still_time, image_name, s
   if (!is.POSIXct(vid_start)) {
     vid_start <- with_tz(ymd_hms(vid_start, tz="America/Los_Angeles"), tz="UTC")
   }
-  still_split <- as.numeric(unlist(str_split(still_time, ":")))
+  still_split <- as.numeric(unlist(str_split(still_time, "_")))
   img_time <- vid_start + (still_split[1]*60) + (still_split[2]) + (still_split[3]/30)
+  if (vid_num > 1) {
+    img_time <- img_time + (5*60) + (27) + (added_vid_millis/30)
+  }
   row <- which(lidar_data$DateTime == img_time)
   if (length(row) == 0) {
     stop("No Lidar data for this timestamp")
@@ -60,12 +64,12 @@ corrected_image_alt <- function(lidar_file, vid_start, still_time, image_name, s
     safety_data <- read.csv(safety_file) %>% 
       bind_rows(., data.frame(Image = paste0(image_name,".png"), Altitude = corrected_alt, 
                               Focal_Length = focal_length, Pixel_Dimension = pixel_dim)) %>% 
-      distinct()
+      distinct() %>% arrange(Image)
     write.csv(safety_data, safety_file, row.names=FALSE)
   } else {
     safety_data <- data.frame(Image = paste0(image_name,".png"), Altitude = corrected_alt, 
                               Focal_Length = focal_length, Pixel_Dimension = pixel_dim) %>% 
-      distinct()
+      distinct() %>% arrange(Image)
     write.csv(safety_data, safety_file, row.names=FALSE)
   }
   
@@ -73,9 +77,9 @@ corrected_image_alt <- function(lidar_file, vid_start, still_time, image_name, s
   print(paste0("Correct altitude is: ", corrected_alt, " m"))
 }
 
-corrected_image_alt(safety_file = "G:/Shared drives/Proj_Guadalupe/UAS/2022/Morphometrix_Measurements_Safety_File.csv", #change for each year of images
-                    lidar_file = "E:/IG/Aug IG SSCS 2022/UAS/20220816/LidarLog_DailyMaster.csv",                        #changes for each day of videos
-                    vid_start = "2022-08-16 11:02:08",                                                                  #change for each video
-                    image_name = "20220325113659_METRInspire1.MOV.00_04_51_00.Still021",                                #change for each image
-                    still_time = "04_51_00",                                                                            #change for each image
-                    lidar_camera_offset_cm = -9, focal_length = 25, pixel_dim = .0045)                                  #don't change
+corrected_image_alt(safety_file = "C:/Users/DavidSweeney/Documents/UAS/PVC-Frame_Calibrations/20230131/Morphometrix_Measurements_Safety_File.csv", #change for each year of images
+                    lidar_file = "C:/Users/DavidSweeney/Documents/UAS/PVC-Frame_Calibrations/20230131/LidarLog_DailyMaster.csv",                        #changes for each day of videos
+                    vid_start = "2023-01-31 13:38:34",                                                                  #change for each video
+                    image_name = "20130317044451_METRInspire1.MOV.00_00_08_23.Still002",                                #change for each image
+                    still_time = "00_08_23", vid_num = 2, added_vid_millis = 7,                                                              #change for each image
+                    lidar_camera_offset_cm = -9, focal_length = 25, pixel_dim = .0033)                                  #don't change

@@ -35,7 +35,7 @@
   #   drone folders and to allow new drones more easily
 
 #### Manual Inputs ####
-day_folder <- "C:/Users/DavidSweeney/Documents/UAS/PVC-Frame_Calibrations/20230102"  #folder directory for days images
+day_folder <- "C:/Users/DavidSweeney/Documents/UAS/PVC-Frame_Calibrations/20230131"  #folder directory for days images
 
 #### stuff that just needs to run ####
 {
@@ -108,7 +108,8 @@ day_folder <- "C:/Users/DavidSweeney/Documents/UAS/PVC-Frame_Calibrations/202301
       filetype <- strsplit(filetype, "[.]")[[1]][2] #still determining if video or image
       
       #get the datetime of the start of the created media from exif data
-      cd <- ymd_hms(exif_read(paste(day_folder, f, d, sep="/"), "CreateDate")$CreateDate, tz="America/Los_Angeles")
+      cd <- suppressWarnings(ymd_hms(exif_read(paste(day_folder, f, d, sep="/"), "CreateDate")$CreateDate, 
+                                     tz="America/Los_Angeles"))
       yyyy <- year(cd)
       mm <- if_else(nchar(month(cd)) == 2, as.character(month(cd)), paste0(0,month(cd)))
       dd <- if_else(nchar(day(cd)) == 2, as.character(day(cd)), paste0(0,day(cd)))
